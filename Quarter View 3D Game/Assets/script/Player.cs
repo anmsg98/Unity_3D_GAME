@@ -41,22 +41,25 @@ public class Player : MonoBehaviour
     bool isReload;
     bool isFireReady = false;
     bool isBorder;
+    bool isDamage;
 
     Vector3 moveVec;
     Vector3 DodgeVec;
 
     Rigidbody rigid;
     Animator anim;
+    MeshRenderer[] meshes;
 
     GameObject nearObject;
     Weapon equipWeapon;
     int equipWeaponIndex = -1;
     float fireDelay;
 
-    private void Awake()
+    void Awake()
     {
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
+        meshes = GetComponentsInChildren<MeshRenderer>();
     }
     
     void Update()
@@ -333,6 +336,32 @@ public class Player : MonoBehaviour
                     break;
             }
             Destroy(other.gameObject);
+        }
+        else if (other.tag == "EnemyBullet")
+        {
+            if (!isDamage)
+            {
+                Bullet enemyBullet = other.GetComponent<Bullet>();
+                health -= enemyBullet.damage;
+                StartCoroutine(OnDamage());
+            }
+        }
+    }
+
+    IEnumerator OnDamage()
+    {
+        isDamage = true;
+        foreach(MeshRenderer mesh in meshes)
+        {
+            mesh.material.color = Color.yellow;
+        }
+        yield return new WaitForSeconds(1f);
+
+        isDamage = false;
+
+        foreach (MeshRenderer mesh in meshes)
+        {
+            mesh.material.color = Color.white;
         }
     }
 

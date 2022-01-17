@@ -10,7 +10,7 @@ public class Bullet : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Floor")
-        {
+        { 
             Destroy(gameObject, 3);
         }
        

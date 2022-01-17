@@ -5,10 +5,14 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    public enum Type { A,B,C};
+    public Type enemyType;
     public int maxHealth;
     public int curHealth;
     public bool isChase;
     public Transform target;
+    public BoxCollider meleeArea;
+    public bool isAttack;
 
     Rigidbody rigid;
     BoxCollider boxCollider;
@@ -35,8 +39,11 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        if (isChase)
+        if (nav.enabled)
+        {
             nav.SetDestination(target.position);
+            nav.isStopped = !isChase;
+        }          
     }
 
 
@@ -50,8 +57,72 @@ public class Enemy : MonoBehaviour
        
     }
     
+    void Targeting()
+    {
+        float targetRadius = 0;
+        float targetRange = 0;
+
+        switch (enemyType)
+        {
+            case Type.A:
+                targetRadius = 1.0f;
+                targetRange = 1f;
+                break;
+            case Type.B:
+                targetRadius = 1.0f;
+                targetRange = 1f;
+                break;
+            case Type.C:
+                break;
+
+        }
+       
+        RaycastHit[] rayHits = Physics.SphereCastAll(transform.position, targetRadius, transform.forward, targetRange, LayerMask.GetMask("Player"));
+
+        if(rayHits.Length > 0 && !isAttack)
+        {
+            StartCoroutine(Attack());
+        }
+
+    }
+    IEnumerator Attack()
+    {
+        isChase = false;
+        isAttack = true;
+        anim.SetBool("IS_ATTACK", true);
+
+        switch (enemyType)
+        {
+            case Type.A:
+                yield return new WaitForSeconds(0.2f);
+                meleeArea.enabled = true;
+
+                yield return new WaitForSeconds(1f);
+                meleeArea.enabled = false;
+
+                yield return new WaitForSeconds(1f);
+                break;
+            case Type.B:
+                yield return new WaitForSeconds(0.1f);
+                meleeArea.enabled = true;
+
+                yield return new WaitForSeconds(1f);
+                meleeArea.enabled = false;
+
+                yield return new WaitForSeconds(1f);
+                break;
+            case Type.C:
+                break;
+        }
+
+        
+        isChase = true;
+        isAttack = false;
+        anim.SetBool("IS_ATTACK", false);
+    }
     void FixedUpdate()
     {
+        Targeting();
         FreezeVelocity();
     }
 
