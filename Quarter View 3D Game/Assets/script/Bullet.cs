@@ -6,6 +6,7 @@ public class Bullet : MonoBehaviour
 {
     Rigidbody rigid;
     public int damage;
+    public bool isMelee;
 
     void OnCollisionEnter(Collision collision)
     {
@@ -18,7 +19,7 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Wall") 
+        if (!isMelee && other.gameObject.tag == "Wall") 
         {
             Destroy(gameObject);
         }
