@@ -5,7 +5,7 @@ using UnityEngine;
 public class BossRock : Bullet
 {
     Rigidbody rigid;
-    float angularPower = 0.5f;
+    float angularPower = 2;
     float scaleValue = 0.025f;
     bool isShoot;
 
@@ -27,7 +27,7 @@ public class BossRock : Bullet
         while(!isShoot)
         {
             angularPower += 0.005f;
-            scaleValue += 0.00125f;
+            scaleValue += 0.00025f;
             transform.localScale = Vector3.one * scaleValue;
             rigid.AddTorque(transform.right * angularPower, ForceMode.Acceleration);
             yield return null;
